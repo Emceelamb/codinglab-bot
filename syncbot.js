@@ -40,9 +40,17 @@ bot.on("message", function(user, userID, channelID, message, evt) {
             message: res
           });
         }
-        // googlesheetsapi.fetchGoogle();
-        googlesheetsapi.fetchGoogle({
+
+        const unresolvedData = googlesheetsapi.fetchGoogle({
           sendMsg
+        });
+        unresolvedData.then(rawData => {
+          rawData.data.values.forEach(counselorInfo => {
+            bot.sendMessage({
+              to: channelID,
+              message: `YEAH 🎉 \n ${counselorInfo}`
+            });
+          });
         });
 
         break;

@@ -10,14 +10,23 @@ const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
 const TOKEN_PATH = "token.json";
 
 // Load client secrets from a local file.
-function fetchGoogle(bot) {
-  // return new Promise((resolve, reject) => {
-  // readCred();
-  new Promise((resolve, reject) => {
+function fetchGoogle() {
+  /* vince's note */
+  // return a Promise function back to syncbot.js
+  // and unpack the pulled data there
+  return new Promise((resolve, reject) => {
     fs.readFile("credentials.json", (err, content) => {
       if (err) return console.log("Error loading client secret file:", err);
       // Authorize a client with credentials, then call the Google Sheets API.
-      authorize(JSON.parse(content), datapull, bot);
+
+      /* vince's note */
+      // the .then() here is unpacking the read content from fs.readFile
+      // returned from authorize()
+      authorize(JSON.parse(content), datapull).then(unresolvedData => {
+        // the unresolved data here is the raw data
+        // coming from datapull()
+        resolve(unresolvedData);
+      });
     });
   });
 }
@@ -40,7 +49,7 @@ function readCred() {
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, callback, bot) {
+function authorize(credentials, pullData) {
   const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
@@ -49,13 +58,19 @@ function authorize(credentials, callback, bot) {
   );
 
   // Check if we have previously stored a token.
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getNewToken(oAuth2Client, callback);
 
-    oAuth2Client.setCredentials(JSON.parse(token));
+  /* vince's note */
+  // return a Promise function back to fetchGoogle()
+  // and unpack the read data there
+  return new Promise((resolve, reject) => {
+    fs.readFile(TOKEN_PATH, (err, token) => {
+      if (err) return getNewToken(oAuth2Client, pullData);
 
-    // console.log(callback(oAuth2Client), "testing");
-    callback(oAuth2Client, bot);
+      oAuth2Client.setCredentials(JSON.parse(token));
+      const unresolvedData = pullData(oAuth2Client);
+
+      resolve(unresolvedData);
+    });
   });
 }
 
@@ -99,44 +114,16 @@ function getNewToken(oAuth2Client, callback) {
  * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
-function datapull(auth, bot) {
+function datapull(auth) {
   const sheets = google.sheets({ version: "v4", auth });
 
-  // return new Promise((resolve, reject) => {
-  sheets.spreadsheets.values
-    .get({
-      spreadsheetId: "1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ",
-      range: "Sheet1!A2:E"
-    })
-    .then(res => {
-      const rows = res.data.values;
-
-      res.data.values.forEach(res => {
-        bot.sendMsg(res);
-      });
-    })
-    .catch(err => console.error(err));
-  // });
-
-  // sheets.spreadsheets.values
-  //   .get({
-  //     spreadsheetId: "1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ",
-  //     range: "Sheet1!A2:E"
-  //   })
-  //   .then(res => {
-  //     const rows = res.data.values;
-  //     // console.log(rows);
-  //     // return res.data.values;
-  //     return rows;
-  //   })
-  //   .catch(err => console.error(err));
-
-  //   if (err) return console.log('The API returned an error: ' + err);
-  //   const rows = res.data.values;
-  //   console.log(rows)
-  //   return rows
-  // });
-  // return result
+  /* vince's note */
+  // return this unresolved Promise function
+  // and unpack it in synbot.js (entry point of the bot)
+  return sheets.spreadsheets.values.get({
+    spreadsheetId: "1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ",
+    range: "Sheet1!A2:E"
+  });
 }
 
 exports.fetchGoogle = fetchGoogle;
