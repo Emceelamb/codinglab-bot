@@ -1,0 +1,16 @@
+{
+  "name": "codinglab-robot",
+  "version": "1.0.0",
+  "description": "Coding Lab Robot",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mark Lam",
+  "license": "ISC",
+  "dependencies": {
+    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+    "googleapis": "^39.2.0",
+    "winston": "^3.2.1"
+  }
+}
