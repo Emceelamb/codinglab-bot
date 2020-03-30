@@ -4,6 +4,8 @@ var Discord = require("discord.io");
 var logger = require("winston");
 var auth = require("./auth.json");
 
+const { botMsgActions } = require("./botMsgActions.js");
+
 // Configure logger settings
 logger.remove(logger.transports.Console);
 logger.add(new logger.transports.Console(), {
@@ -34,17 +36,23 @@ bot.on("message", function(user, userID, channelID, message, evt) {
     switch (cmd) {
       // !ping
       case "codinglab":
-        const unresolvedData = googlesheetsapi.fetchGoogle({
-          sendMsg
-        });
-        unresolvedData.then(rawData => {
-          rawData.data.values.forEach(counselorInfo => {
-            bot.sendMessage({
-              to: channelID,
-              message: `YEAH 🎉 \n ${counselorInfo}`
+        const subCmd = args[0];
+        const unresolvedData = googlesheetsapi.fetchGoogle();
+        const botMsgAct = botMsgActions(bot, channelID);
+
+        switch (subCmd) {
+          case "skill":
+            const skill = args[1];
+            unresolvedData.then(rawData => {
+              botMsgAct.sendSkillMatched(rawData.data.values, skill);
             });
-          });
-        });
+            break;
+          default:
+            unresolvedData.then(rawData => {
+              botMsgAct.sendAll(rawData.data.values);
+            });
+            break;
+        }
 
         break;
       case "thetime":
