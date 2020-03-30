@@ -1,5 +1,5 @@
-// var googlesheetsapi = require('./googlesheetapi.js');
-var googlesheetsapi = require('./gasync.js');
+var googlesheetsapi = require('./googlesheetapi.js');
+// var googlesheetsapi = require('./gasync.js');
 var Discord = require('discord.io');
 var logger = require('winston');
 var auth = require('./auth.json');
@@ -37,13 +37,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 // googlesheetsapi.fetchGoogle();
                 let codinglab = googlesheetsapi.fetchGoogle();
                 console.log(codinglab)
-                codinglab.then((result)=>{
-                  console.log("fffff")
-                bot.sendMessage({
-                    to: channelID,
-                    message: result
-                });
-                })
+                // codinglab.then((result)=>{
+                //   console.log("fffff")
+                // bot.sendMessage({
+                //     to: channelID,
+                //     message: result
+                // });
+                // })
 
                 bot.sendMessage({
                     to: channelID,

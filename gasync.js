@@ -17,10 +17,9 @@ function fetchGoogle() {
       fs.readFile('credentials.json', (err, content) => {
           if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Google Sheets API.
-            authorize(JSON.parse(content), datapull)
-            .then((res)=>{console.log(res)})
+            authorize(JSON.parse(content), datapull);
       });
-  })
+    })
 }
 
 function readCred(){
@@ -102,7 +101,7 @@ function datapull(auth) {
     })
     .then((res)=> {
       const rows = res.data.values;
-      // console.log(rows)
+      console.log(rows)
       return res.data.values
     })
     .catch(err=>console.error(err));

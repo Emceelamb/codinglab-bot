@@ -16,14 +16,15 @@ function fetchGoogle() {
     // Authorize a client with credentials, then call the Google Sheets API.
   authorize(JSON.parse(content), datapull);
   });
-  
 }
+
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
+
 function authorize(credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
@@ -76,19 +77,15 @@ function getNewToken(oAuth2Client, callback) {
 function datapull(auth) {
   const sheets = google.sheets({version: 'v4', auth});
 
-  var spr;
-
-  let prom = new Promise((resolve, reject) => {
-    sheets.spreadsheets.values.get({
-      spreadsheetId:  '1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ',
-      range: 'Sheet1!A2:E',
-    }, (err, res) => {
-      if (err) return console.log('The API returned an error: ' + err);
-      const rows = res.data.values;
-      console.log(rows)
-      return rows
-    });
-  })
+  sheets.spreadsheets.values.get({
+    spreadsheetId:  '1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ',
+    range: 'Sheet1!A2:E',
+  }, (err, res) => {
+    if (err) return console.log('The API returned an error: ' + err);
+    const rows = res.data.values;
+    console.log(rows)
+    return rows
+  });
 }
 
 function hi() {
