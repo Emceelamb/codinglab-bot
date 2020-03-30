@@ -34,13 +34,6 @@ bot.on("message", function(user, userID, channelID, message, evt) {
     switch (cmd) {
       // !ping
       case "codinglab":
-        function sendMsg(res) {
-          bot.sendMessage({
-            to: channelID,
-            message: res
-          });
-        }
-
         const unresolvedData = googlesheetsapi.fetchGoogle({
           sendMsg
         });
