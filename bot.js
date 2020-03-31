@@ -1,76 +1,75 @@
-// var googlesheetsapi = require('./googlesheetapi.js');
-var googlesheetsapi = require('./gasync.js');
-var Discord = require('discord.io');
-var logger = require('winston');
-var auth = require('./auth.json');
+var googlesheetsapi = require("./googlesheetapi.js");
+var Discord = require("discord.io");
+var logger = require("winston");
+var auth = require("./auth.json");
+
+const { botMsgActions } = require("./botMsgActions.js");
 
 // Configure logger settings
 logger.remove(logger.transports.Console);
-logger.add(new logger.transports.Console, {
-    colorize: true
+logger.add(new logger.transports.Console(), {
+  colorize: true
 });
-logger.level = 'debug';
+logger.level = "debug";
 
 // Initialize Discord Bot
 var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+  token: auth.token,
+  autorun: true
 });
 
-bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + ' - (' + bot.id + ')');
+bot.on("ready", function(evt) {
+  logger.info("Connected");
+  logger.info("Logged in as: ");
+  logger.info(bot.username + " - (" + bot.id + ")");
 });
 
-bot.on('message', function (user, userID, channelID, message, evt) {
-    // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            // !ping
-            case 'codinglab':
-                // googlesheetsapi.fetchGoogle();
-                let codinglab = googlesheetsapi.fetchGoogle();
-                console.log(codinglab)
-                codinglab.then((result)=>{
-                  console.log("fffff")
-                bot.sendMessage({
-                    to: channelID,
-                    message: result
-                });
-                })
+bot.on("message", function(user, userID, channelID, message, evt) {
+  // Our bot needs to know if it will execute a command
+  // It will listen for messages that will start with `!`
+  if (message.substring(0, 1) == "!") {
+    var args = message.substring(1).split(" ");
+    var cmd = args[0];
 
-                bot.sendMessage({
-                    to: channelID,
-                    message: codinglab
-                });
+    function sendMsg(res) {
+      bot.sendMessage({
+        to: channelID,
+        message: res
+      });
+    }
 
-                // googlesheetsapi.fetchGoogle()
-                // .then((codinglab)=>{
-                //     console.log(codinglab, "THIS is printk")
-                //     bot.sendMessage({
-                //         to: channelID,
-                //         message: codinglab[0]
-                //     });
-                // })
-                // console.log(codinglabresult, 'coding lab case')
-          
-                break;
-          case 'thetime':
-                time = Date.now();
-            bot.sendMessage({
-                    to: channelID,
-                    message: time
-                })
-                break;
+    args = args.splice(1);
+    switch (cmd) {
+      // !ping
+      case "codinglab":
+        const subCmd = args[0];
+        const unresolvedData = googlesheetsapi.fetchGoogle();
+        const botMsgAct = botMsgActions(bot, channelID);
 
-            // Just add any case commands if you want to..
-         }
-     }
+        switch (subCmd) {
+          case "skill":
+            const skill = args[1];
+            unresolvedData.then(rawData => {
+              botMsgAct.sendSkillMatched(rawData.data.values, skill);
+            });
+            break;
+          default:
+            unresolvedData.then(rawData => {
+              botMsgAct.sendAll(rawData.data.values);
+            });
+            break;
+        }
+
+        break;
+      case "thetime":
+        time = Date.now();
+        bot.sendMessage({
+          to: channelID,
+          message: time
+        });
+        break;
+
+      // Just add any case commands if you want to..
+    }
+  }
 });
-
