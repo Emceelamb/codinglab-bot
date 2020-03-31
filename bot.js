@@ -47,6 +47,12 @@ bot.on("message", function(user, userID, channelID, message, evt) {
         const botMsgAct = botMsgActions(bot, channelID);
 
         switch (subCmd) {
+          case "help":
+            bot.sendMessage({
+              to: channelID,
+              message: `You can query skills with the command !codinglab skill <anyskill>`
+            })
+            break;
           case "skill":
             const skill = args[1];
             unresolvedData.then(rawData => {
@@ -61,14 +67,6 @@ bot.on("message", function(user, userID, channelID, message, evt) {
         }
 
         break;
-      case "thetime":
-        time = Date.now();
-        bot.sendMessage({
-          to: channelID,
-          message: time
-        });
-        break;
-
       // Just add any case commands if you want to..
     }
   }
