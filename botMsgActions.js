@@ -9,8 +9,22 @@ function botMsgActions(bot, channelID) {
 
   return {
     sendAll(data) {
-      data.forEach(counselorInfo => {
-        sendMsg(`YEAH 🎉 \n ${counselorInfo}`);
+
+      let counselorIndex = 0;
+      let counselorTable = "```\nCounselor \t | \t Time \t | Zoom ID  "
+      counselorTable += "\rSkills\n"
+      counselorTable += "----------------\n"
+
+      data.forEach((counselorInfo, counselorIndex, data) => {
+        let zoomId=counselorInfo[3].slice(-10)
+        counselorTable+=`${counselorInfo[0]} | ${counselorInfo[2]} | Zoom ID: ${zoomId}\n${counselorInfo[1]}  \n\n`
+          counselorIndex++;
+          if(counselorIndex === data.length){
+            counselorTable+='```'
+            sendMsg(`
+              ${counselorTable}
+              `);
+          }
       });
     },
     sendSkillMatched(data, keyword) {
