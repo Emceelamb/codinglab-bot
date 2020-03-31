@@ -2,7 +2,7 @@
 
 The Coding Lab Discord Bot is a bot that helps ITP/IMA students find information about the coding lab resources for virtual help on the Discord platform.
 
-![Logo](/codinglab-log.jpg)
+![Logo](/assets/codinglab-log.jpg)
 
 ## About
 
