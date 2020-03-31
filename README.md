@@ -12,6 +12,7 @@ The Coding Lab Discord bot is a bot that gives information about ITP/IMA's codin
 ```
 !codinglab - provides a list of coding lab mentors, their skills, hours, and contact info
 !codinglab skill <any skill> - provides a list of mentors that know the requested skill
+!codinglab help - provides help guide
 ```
 
 ## Setup
