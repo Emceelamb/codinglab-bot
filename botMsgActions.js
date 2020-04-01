@@ -39,16 +39,14 @@ function botMsgActions(bot, channelID) {
       let matchedIndex = 0;
       let msg = '```';
 
-      // Would prefer this format
-      // Billy knows p5.js - try Monday 2-5pm!
-      // Mark knows p5.js - try Tuesday 2-5pm!
-
       if (matched.length > 0) {
         matched.forEach((counselor, matchedIndex, matched) => {
           msg += `${counselor[0]} knows ${keyword}! Try ${counselor[2]}\n`;
           matchedIndex++;
           if(matchedIndex === matched.length){
-            msg+='```'
+            msg += '```'
+            // msg += '\n\nYou can make an appointment here:'
+            // msg += '\nhttps://itp.nyu.edu/help/in-person-help/coding-lab/```'
             sendMsg(`
               ${msg}
               `);
