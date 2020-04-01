@@ -1,4 +1,70 @@
-// helper function
+const getter = {
+  /**
+   * Getting keyword in database that's synonymous with input:
+   * @param {string} input
+   */
+  synonymous(input) {
+    switch (input) {
+      case "js":
+        return "javascript";
+      case "react":
+        return "reactjs";
+      case "vue":
+        return "vuejs";
+      case "p5":
+        return "p5js";
+      case "node":
+        return "nodejs";
+      case "max" || "msp" || "jitter":
+        return "maxmsp";
+      default:
+        return input;
+    }
+  },
+
+  /**
+   * Get counselors that have skills matched with input keyword:
+   * @param {object} data
+   */
+
+  skillMatchedCounselors(data, inputSkill) {
+    return data.filter(counselorInfo => {
+      // formatted skills is matched with F column in the sheet
+      const rawSkills = counselorInfo[5].split(", ");
+      const formattedInputSkill = getter.synonymous(
+        setter.formatKeyword(inputSkill)
+      );
+
+      return (
+        rawSkills.filter(skill => {
+          const formattedSkill = setter.formatKeyword(skill);
+          return formattedSkill === formattedInputSkill;
+        }).length > 0
+      );
+      c;
+    });
+  }
+};
+
+const setter = {
+  /**
+   * Format keyword into shape that conforms database skill strings:
+   * @param {string} keyword
+   */
+  formatKeyword(keyword) {
+    const regexPattern = /\w/gi;
+    return keyword
+      .match(regexPattern)
+      .join("")
+      .toLowerCase();
+  }
+};
+
+/**
+ * Function that includes message sending actions of the bot:
+ * @param {Discord.Client} bot
+ * @param {string} channelID
+ */
 function botMsgActions(bot, channelID) {
   const sendMsg = msg => {
     bot.sendMessage({
@@ -9,55 +75,50 @@ function botMsgActions(bot, channelID) {
 
   return {
     sendAll(data) {
+      let counselorTable = "```*** Coding Lab Tech Info *** \n\n";
 
-      let counselorIndex = 0;
-      // let counselorTable = "```\nCounselor \t | \t Time \t | Zoom ID"
-      // counselorTable += "\rSkills\n"
-      let counselorTable="```*** Coding Lab Tech Info *** \n\n"
-      // counselorTable += "----------------\n"
+      // 1. loop through fetched array of data
+      data.forEach((counselorInfo, counselorIndex) => {
+        // 2. Initiate start of the message sending to Discord
+        let zoomId = counselorInfo[3].slice(-10);
+        counselorTable += `${counselorInfo[0]} | ${counselorInfo[2]} | ZoomID: ${zoomId}\n${counselorInfo[1]}  \n\n`;
 
-      data.forEach((counselorInfo, counselorIndex, data) => {
-        let zoomId=counselorInfo[3].slice(-10)
-        counselorTable+=`${counselorInfo[0]} | ${counselorInfo[2]} | ZoomID: ${zoomId}\n${counselorInfo[1]}  \n\n`
-          counselorIndex++;
-          if(counselorIndex === data.length){
-            counselorTable+='```'
-            sendMsg(`
+        // 3. Send the message at the end of the array
+        const isLastCounselor = counselorIndex === data.length - 1;
+        if (isLastCounselor) {
+          counselorTable += "```";
+          sendMsg(`
               ${counselorTable}
               `);
-          }
+        }
       });
     },
-    sendSkillMatched(data, keyword) {
-      const matched = data.filter(counselorInfo => {
-        return (
-          counselorInfo.filter(info => {
-            return info.toLowerCase().search(keyword.toLowerCase()) > -1;
-          }).length > 0
-        );
-      });
+    sendSkillMatched(data, inputSkill) {
+      const matchedOnes = getter.skillMatchedCounselors(data, inputSkill);
 
-      let matchedIndex = 0;
-      let msg = '```';
+      if (matchedOnes.length > 0) {
+        let msgTable = ` \`\`\`*** Following Techs Know <${inputSkill}>*** \n\n`;
 
-      // Would prefer this format
-      // Billy knows p5.js - try Monday 2-5pm!
-      // Mark knows p5.js - try Tuesday 2-5pm!
+        matchedOnes.forEach((counselor, counselorIndex) => {
+          let zoomId = counselor[3].slice(-10);
+          msgTable += `${counselor[0]} | ${counselor[2]} | ZoomID: ${zoomId} \n\n`;
 
-      if (matched.length > 0) {
-        matched.forEach((counselor, matchedIndex, matched) => {
-          msg += `${counselor[0]} knows ${keyword}! Try ${counselor[2]}\n`;
-          matchedIndex++;
-          if(matchedIndex === matched.length){
-            msg+='```'
-            msg+='Book hours here: https://calendar.google.com/calendar/selfsched?sstoken=UUQtTkNDbVFiUEhRfGRlZmF1bHR8NGNkOWNlZWVjOTZhYzI0MjAxNDYyMzFiMTJmNWZiZmE'
+          // msgTable += `${counselor[0]} knows ${inputSkill}! Try ${counselor[2]}\n`;
+
+          const isLastCounselor = counselorIndex === matchedOnes.length - 1;
+          if (isLastCounselor) {
+            msgTable += "```";
+            msgTable +=
+              "Book hours here: https://calendar.google.com/calendar/selfsched?sstoken=UUQtTkNDbVFiUEhRfGRlZmF1bHR8NGNkOWNlZWVjOTZhYzI0MjAxNDYyMzFiMTJmNWZiZmE";
             sendMsg(`
-              ${msg}
+              ${msgTable}
               `);
           }
         });
       } else {
-        sendMsg(`😅 Sorry! We have no ${keyword} experts at this time.  Try an ITP resident or faculty member here: https://itp.nyu.edu/help/in-person-help/office-hours/`);
+        sendMsg(
+          `😅 Sorry! We have no ${inputSkill} experts at this time.  Try an ITP resident or faculty member here: https://itp.nyu.edu/help/in-person-help/office-hours/`
+        );
       }
     }
   };
