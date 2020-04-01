@@ -50,6 +50,7 @@ function botMsgActions(bot, channelID) {
           matchedIndex++;
           if(matchedIndex === matched.length){
             msg+='```'
+            msg+='Book hours here: https://calendar.google.com/calendar/selfsched?sstoken=UUQtTkNDbVFiUEhRfGRlZmF1bHR8NGNkOWNlZWVjOTZhYzI0MjAxNDYyMzFiMTJmNWZiZmE'
             sendMsg(`
               ${msg}
               `);

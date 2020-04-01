@@ -50,7 +50,7 @@ bot.on("message", function(user, userID, channelID, message, evt) {
           case "help":
             bot.sendMessage({
               to: channelID,
-              message: "You can query skills with the command `!codinglab skill <anyskill>` or you can list all mentors with `!codinglab`"
+              message: "To find help a lab tech with a particular skill, use: `!codinglab skill <anyskill>` or you can list all lab techs with: `!codinglab`"
             })
             break;
           case "skill":
