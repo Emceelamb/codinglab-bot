@@ -97,18 +97,21 @@ function botMsgActions(bot, channelID) {
       const matchedOnes = getter.skillMatchedCounselors(data, inputSkill);
 
       if (matchedOnes.length > 0) {
-        let msg = "```";
+        let msgTable = ` \`\`\`*** Following Techs Know <${inputSkill}>*** \n\n`;
 
         matchedOnes.forEach((counselor, counselorIndex) => {
-          msg += `${counselor[0]} knows ${inputSkill}! Try ${counselor[2]}\n`;
+          let zoomId = counselor[3].slice(-10);
+          msgTable += `${counselor[0]} | ${counselor[2]} | ZoomID: ${zoomId} \n\n`;
+
+          // msgTable += `${counselor[0]} knows ${inputSkill}! Try ${counselor[2]}\n`;
 
           const isLastCounselor = counselorIndex === matchedOnes.length - 1;
           if (isLastCounselor) {
-            msg += "```";
-            msg +=
+            msgTable += "```";
+            msgTable +=
               "Book hours here: https://calendar.google.com/calendar/selfsched?sstoken=UUQtTkNDbVFiUEhRfGRlZmF1bHR8NGNkOWNlZWVjOTZhYzI0MjAxNDYyMzFiMTJmNWZiZmE";
             sendMsg(`
-              ${msg}
+              ${msgTable}
               `);
           }
         });
