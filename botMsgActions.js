@@ -44,9 +44,9 @@ function botMsgActions(bot, channelID) {
           msg += `${counselor[0]} knows ${keyword}! Try ${counselor[2]}\n`;
           matchedIndex++;
           if(matchedIndex === matched.length){
-            msg += '```'
-            // msg += '\n\nYou can make an appointment here:'
-            // msg += '\nhttps://itp.nyu.edu/help/in-person-help/coding-lab/```'
+            // msg += '```'
+            msg += '\n\nYou can make an appointment here:'
+            msg += '\nhttps://itp.nyu.edu/help/in-person-help/coding-lab/```'
             sendMsg(`
               ${msg}
               `);
