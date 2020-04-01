@@ -11,13 +11,14 @@ function botMsgActions(bot, channelID) {
     sendAll(data) {
 
       let counselorIndex = 0;
-      let counselorTable = "```\nCounselor \t | \t Time \t | Zoom Mtg ID  "
-      counselorTable += "\rSkills\n"
-      counselorTable += "----------------\n"
+      // let counselorTable = "```\nCounselor \t | \t Time \t | Zoom ID"
+      // counselorTable += "\rSkills\n"
+      let counselorTable="```*** Coding Lab Tech Info *** \n\n"
+      // counselorTable += "----------------\n"
 
       data.forEach((counselorInfo, counselorIndex, data) => {
         let zoomId=counselorInfo[3].slice(-10)
-        counselorTable+=`${counselorInfo[0]} | ${counselorInfo[2]} | Zoom Mtg ID: ${zoomId}\n${counselorInfo[1]}  \n\n`
+        counselorTable+=`${counselorInfo[0]} | ${counselorInfo[2]} | ZoomID: ${zoomId}\n${counselorInfo[1]}  \n\n`
           counselorIndex++;
           if(counselorIndex === data.length){
             counselorTable+='```'
