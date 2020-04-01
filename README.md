@@ -35,9 +35,11 @@ To run the discord bot you must have:
 4. Save the authentication files to the `codinglab-bot` directory
 5. Run the bot with `npm start`
 
-### Develop
+### Develop & Contribute
 
+Please submit bugs and feature requests as github issues.  
 Please e-mail the project owner to get the authentication files.  
+Feel free to fork the project and submit a pull request
 
 ## Built with
 
@@ -48,3 +50,4 @@ Please e-mail the project owner to get the authentication files.
 
 * [Mark Lam](https://markofthelam.com) 
 * [Vince Shao](https://www.vinceshao.com/) 
+* [Billy Bennett](https://github.com/billythemusical)
