@@ -122,7 +122,7 @@ function datapull(auth) {
   // and unpack it in synbot.js (entry point of the bot)
   return sheets.spreadsheets.values.get({
     spreadsheetId: "1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ",
-    range: "Sheet1!A2:E"
+    range: "Sheet1!A2:F"
   });
 }
 
