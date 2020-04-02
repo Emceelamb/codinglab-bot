@@ -1,3 +1,8 @@
+//.env for environmental variables
+let env = require("dotenv").config();
+let channelID = process.env.CHANNEL_ID;
+console.log(`Working with the Channel ID: ${channelID}`);
+
 var googlesheetsapi = require("./googlesheetapi.js");
 var Discord = require("discord.io");
 var logger = require("winston");
@@ -74,8 +79,7 @@ cron.schedule('0 10 * * *', function (err) {
     if (err) {
       console.log('Cron Job - There was an error ' + error);
     }
-    // the Discord channelID for Ms Server General
-    const channelID = '693153935917318195';
+
     const apptCal = 'https://itp.nyu.edu/help/in-person-help/coding-lab/'
 
     const hour = new Date().getHours(); // returns 0-23 for 12am - 11pm
