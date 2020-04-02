@@ -2,6 +2,7 @@ var googlesheetsapi = require("./googlesheetapi.js");
 var Discord = require("discord.io");
 var logger = require("winston");
 var auth = require("./auth.json");
+const cron = require("node-cron");
 
 const { botMsgActions } = require("./botMsgActions.js");
 
@@ -65,3 +66,93 @@ bot.on("message", function(user, userID, channelID, message, evt) {
     }
   }
 });
+
+// Cron does time like so:
+// ('<minutes(of 60)> <hours(of 24)> <days(of month)> <months> <year>')
+// * means "every"
+cron.schedule('0 10 * * *', function (err) {
+    if (err) {
+      console.log('Cron Job - There was an error ' + error);
+    }
+    // the Discord channelID for Ms Server General
+    const channelID = '693153935917318195';
+    const apptCal = 'https://itp.nyu.edu/help/in-person-help/coding-lab/'
+
+    const hour = new Date().getHours(); // returns 0-23 for 12am - 11pm
+    const min = new Date().getMinutes(); // returns 0-59
+    const time = `${hour}:${min}`;
+
+    // get the google sheet
+    const unresolvedData = googlesheetsapi.fetchGoogle();
+    const botMsgAct = botMsgActions(bot, channelID);
+
+    unresolvedData.then(rawData => {
+      const data = rawData.data.values;
+      const day = new Date().getDay(); //returns 0-6 for Sun-Sat
+      const dayNum = checkDay(day);
+      const matched = data.filter(counselorInfo => {
+        return (
+          counselorInfo.filter(info => {
+            return info.toLowerCase().search(dayNum.toLowerCase()) > -1;
+          }).length > 0
+        );
+      });
+      // console.log(`the day is ${dayNum} \nand matched is ${matched}`)
+      let matchedIndex = 0;
+      if (matched.length > 0) {
+        // let msg = '```*** New Shifts Starting Now! ***\n\n';
+        let theDay = dayNum
+        if (theDay == 'Wed'){
+          theDay = 'Wednes'
+        }
+        let msg = '```'
+        msg += `*** Here\'s who\'s on duty for ${theDay}day! ***\n\n`;
+        matched.forEach((counselor, matchedIndex, matched) => {
+          // let zoomId=counselorInfo[3].slice(-10)
+          let zoomId=counselor[3];
+
+          msg += `${counselor[0]} is in the lab from ${counselor[2].split(' ')[1]}\n`;
+          msg += `Feel free to drop in here: ${zoomId}\n\n`
+          matchedIndex++;
+          if(matchedIndex === matched.length){
+            msg += `If you missed us, you can always make an appt here: \n${apptCal}\n\n`
+            msg += '```'
+            bot.sendMessage({
+              to: channelID,
+              message: msg
+            });
+          }
+            // sendMsg(`
+            //    ${msg}
+            //    `);
+            // }
+        });
+      }
+    });
+  },
+{
+  scheduled: true, timezone: "America/New_York"
+});
+
+function checkDay(day){
+  switch (day) {
+    case 1:
+    return 'Mon'
+    break;
+    case 2:
+    return 'Tues'
+    break;
+    case 3:
+    return 'Wed'
+    break;
+    case 4:
+    return 'Thurs'
+    break;
+    case 5:
+    return 'Fri'
+    break;
+    default:
+      return "no day found"
+    break;
+  }
+}
