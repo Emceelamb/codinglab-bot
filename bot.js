@@ -79,7 +79,7 @@ cron.schedule('0 10 * * *', function (err) {
     if (err) {
       console.log('Cron Job - There was an error ' + error);
     }
-
+  
     const apptCal = 'https://itp.nyu.edu/help/in-person-help/coding-lab/'
 
     const hour = new Date().getHours(); // returns 0-23 for 12am - 11pm
