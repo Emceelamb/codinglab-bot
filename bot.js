@@ -76,7 +76,7 @@ bot.on("message", function(user, userID, channelID, message, evt) {
 // Cron does time like so:
 // ('<minutes(of 60)> <hours(of 24)> <days(of month)> <months> <year>')
 // * means "every"
-cron.schedule('* * * * *', function (err) {
+cron.schedule('0 10 * * *', function (err) {
     if (err) {
       console.log('Cron Job - There was an error ' + error);
     }
@@ -87,7 +87,6 @@ cron.schedule('* * * * *', function (err) {
     const hour = new Date().getHours(); // returns 0-23 for 12am - 11pm
     const min = new Date().getMinutes(); // returns 0-59
     const time = `${hour}:${min}`;
-    console.log("This is the time: " + time);
 
     // get the google sheet
     const unresolvedData = googlesheetsapi.fetchGoogle();
@@ -97,7 +96,6 @@ cron.schedule('* * * * *', function (err) {
       const data = rawData.data.values;
       const day = new Date().getDay(); //returns 0-6 for Sun-Sat
       const dayNum = checkDay(day);
-      // console.log(dayNum);
       const matched = data.filter(counselorInfo => {
         return (
           counselorInfo.filter(info => {
@@ -108,15 +106,22 @@ cron.schedule('* * * * *', function (err) {
       // console.log(`the day is ${dayNum} \nand matched is ${matched}`)
       let matchedIndex = 0;
       if (matched.length > 0) {
-        let msg = '```**New Shifts Starting Now!**\n\n'';
+        // let msg = '```*** New Shifts Starting Now! ***\n\n';
+        let theDay = dayNum
+        if (theDay == 'Wed'){
+          theDay = 'Wednes'
+        }
+        let msg = '```'
+        msg += `*** Here\'s who\'s on duty for ${theDay}day! ***\n\n`;
         matched.forEach((counselor, matchedIndex, matched) => {
           // let zoomId=counselorInfo[3].slice(-10)
           let zoomId=counselor[3];
-          msg += `${counselor[0]} is in the lab today from ${counselor[2].split(' ')[1]}\n`;
-          msg += `Feel free to drop in here: ${zoomId}\n`
-          msg += `Or make an appt here: ${apptCal}\n\n`
+
+          msg += `${counselor[0]} is in the lab from ${counselor[2].split(' ')[1]}\n`;
+          msg += `Feel free to drop in here: ${zoomId}\n\n`
           matchedIndex++;
           if(matchedIndex === matched.length){
+            msg += `If you missed us, you can always make an appt here: \n${apptCal}\n\n`
             msg += '```'
             bot.sendMessage({
               to: channelID,
