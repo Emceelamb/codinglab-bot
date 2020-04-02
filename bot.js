@@ -32,13 +32,6 @@ bot.on("message", function(user, userID, channelID, message, evt) {
     var args = message.substring(1).split(" ");
     var cmd = args[0];
 
-    function sendMsg(res) {
-      bot.sendMessage({
-        to: channelID,
-        message: res
-      });
-    }
-
     args = args.splice(1);
     switch (cmd) {
       // !ping
@@ -51,8 +44,9 @@ bot.on("message", function(user, userID, channelID, message, evt) {
           case "help":
             bot.sendMessage({
               to: channelID,
-              message: "You can query skills with the command `!codinglab skill <anyskill>` or you can list all mentors with `!codinglab`"
-            })
+              message:
+                "To find help a lab tech with a particular skill, use: `!codinglab skill <anyskill>` or you can list all lab techs with: `!codinglab`"
+            });
             break;
           case "skill":
             const skill = args[1];
