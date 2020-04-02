@@ -74,8 +74,11 @@ cron.schedule('0 10 * * *', function (err) {
     if (err) {
       console.log('Cron Job - There was an error ' + error);
     }
+    // the Discord channelID for Coding Lab on ITP/IMA
+    const channelID = '688118120002486404';
     // the Discord channelID for Ms Server General
-    const channelID = '693153935917318195';
+    // const channelID = '693153935917318195';
+
     const apptCal = 'https://itp.nyu.edu/help/in-person-help/coding-lab/'
 
     const hour = new Date().getHours(); // returns 0-23 for 12am - 11pm
