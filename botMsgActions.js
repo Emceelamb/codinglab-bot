@@ -15,7 +15,9 @@ const getter = {
         return "p5js";
       case "node":
         return "nodejs";
-      case "max" || "msp" || "jitter":
+      case "max":
+      case "msp":
+      case "jitter":
         return "maxmsp";
       default:
         return input;
@@ -28,7 +30,7 @@ const getter = {
    */
 
   skillMatchedCounselors(data, inputSkill) {
-    return data.filter(counselorInfo => {
+    return data.filter((counselorInfo) => {
       // formatted skills is matched with F column in the sheet
       const rawSkills = counselorInfo[5].split(", ");
       const formattedInputSkill = getter.synonymous(
@@ -36,14 +38,14 @@ const getter = {
       );
 
       return (
-        rawSkills.filter(skill => {
+        rawSkills.filter((skill) => {
           const formattedSkill = setter.formatKeyword(skill);
           return formattedSkill === formattedInputSkill;
         }).length > 0
       );
       c;
     });
-  }
+  },
 };
 
 const setter = {
@@ -53,11 +55,8 @@ const setter = {
    */
   formatKeyword(keyword) {
     const regexPattern = /\w/gi;
-    return keyword
-      .match(regexPattern)
-      .join("")
-      .toLowerCase();
-  }
+    return keyword.match(regexPattern).join("").toLowerCase();
+  },
 };
 
 /**
@@ -66,10 +65,10 @@ const setter = {
  * @param {string} channelID
  */
 function botMsgActions(bot, channelID) {
-  const sendMsg = msg => {
+  const sendMsg = (msg) => {
     bot.sendMessage({
       to: channelID,
-      message: msg
+      message: msg,
     });
   };
 
@@ -120,7 +119,7 @@ function botMsgActions(bot, channelID) {
           `😅 Sorry! We have no ${inputSkill} experts at this time.  Try an ITP resident or faculty member here: https://itp.nyu.edu/help/in-person-help/office-hours/`
         );
       }
-    }
+    },
   };
 }
 
