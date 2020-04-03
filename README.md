@@ -26,6 +26,7 @@ To run the discord bot you must have:
   1. auth.json
   2. credentials.json
   3. token.json
+  4. `.env` for channel authentication
 
 ### Installation
 
