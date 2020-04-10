@@ -83,6 +83,15 @@ function botMsgActions(bot, channelID) {
         counselorTable += `${counselorInfo[0]} | ${counselorInfo[2]} | ZoomID: ${zoomId}\n${counselorInfo[1]}  \n\n`;
 
         // 3. Send the message at the end of the array
+        const midCounselor =  Math.floor((data.length / 2) - 1);
+        console.log(midCounselor)
+        if (counselorIndex == midCounselor) {
+          counselorTable += "```";
+          sendMsg(`
+              ${counselorTable}
+              `);
+          counselorTable = "```"
+        }
         const isLastCounselor = counselorIndex === data.length - 1;
         if (isLastCounselor) {
           counselorTable += "```";
