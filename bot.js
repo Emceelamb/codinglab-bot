@@ -75,8 +75,7 @@ bot.on("message", function(user, userID, channelID, message, evt) {
 // Cron does time like so:
 // ('<minutes(of 60)> <hours(of 24)> <days(of month)> <months> <year>')
 // * means "every"
-// cron.schedule('0 10 * * *', function (err) {
-  cron.schedule('* * * * *', function (err) {
+cron.schedule('0 10 * * *', function (err) {
     if (err) {
       console.log('Cron Job - There was an error ' + error);
     }
