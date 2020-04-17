@@ -79,7 +79,7 @@ cron.schedule('0 10 * * *', function (err) {
     if (err) {
       console.log('Cron Job - There was an error ' + error);
     }
-  
+
     const apptCal = 'https://itp.nyu.edu/help/in-person-help/coding-lab/'
 
     const hour = new Date().getHours(); // returns 0-23 for 12am - 11pm
@@ -120,16 +120,13 @@ cron.schedule('0 10 * * *', function (err) {
           matchedIndex++;
           if(matchedIndex === matched.length){
             msg += `If you missed us, you can always make an appt here: \n${apptCal}\n\n`
-            msg += '```'
-            bot.sendMessage({
-              to: channelID,
-              message: msg
-            });
+            msg += '```';
           }
-            // sendMsg(`
-            //    ${msg}
-            //    `);
-            // }
+        });
+        // console.log(`We send this daily announcement:\n${msg}`);
+        bot.sendMessage({
+          to: channelID,
+          message: msg
         });
       }
     });
