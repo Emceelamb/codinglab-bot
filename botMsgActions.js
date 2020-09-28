@@ -9,6 +9,12 @@ const getter = {
         return "javascript";
       case "react":
         return "reactjs";
+      case "reactnative":
+        return "reactnativejs";
+      case "unreal":
+        return "unrealengine";
+      case "pcomp":
+        return "physicalcomputing"
       case "vue":
         return "vuejs";
       case "p5":
@@ -32,7 +38,7 @@ const getter = {
   skillMatchedCounselors(data, inputSkill) {
     return data.filter((counselorInfo) => {
       // formatted skills is matched with F column in the sheet
-      const rawSkills = counselorInfo[5].split(", ");
+      const rawSkills = counselorInfo[4].split(", ");
       const formattedInputSkill = getter.synonymous(
         setter.formatKeyword(inputSkill)
       );
@@ -60,22 +66,17 @@ const setter = {
 };
 
 /**
- * Function that includes message sending actions of the bot:
- * @param {Discord.Client} bot
- * @param {string} channelID
+ * Function that includes message sending actions of the bot
  */
-function botMsgActions(bot, channelID) {
+function botMsgActions(incoming) {
   const sendMsg = (msg) => {
-    bot.sendMessage({
-      to: channelID,
-      message: msg,
-    });
+    incoming.channel.send(msg)
   };
 
   return {
     sendAll(data) {
       let counselorTable = "```*** Coding Lab Tech Info *** \n\n";
-
+      // console.log(data)
       // 1. loop through fetched array of data
       data.forEach((counselorInfo, counselorIndex) => {
         // 2. Initiate start of the message sending to Discord
@@ -84,7 +85,6 @@ function botMsgActions(bot, channelID) {
 
         // 3. Send the message at the end of the array
         const midCounselor =  Math.floor((data.length / 2) - 1);
-        console.log(midCounselor)
         if (counselorIndex == midCounselor) {
           counselorTable += "```";
           sendMsg(`

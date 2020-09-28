@@ -1,12 +1,10 @@
-//.env for environmental variables
-let env = require("dotenv").config();
 let channelID = process.env.CHANNEL_ID;
 console.log(`Working with the Channel ID: ${channelID}`);
 
 var googlesheetsapi = require("./googlesheetapi.js");
-var Discord = require("discord.io");
+var Discord = require("discord.js");
 var logger = require("winston");
-var auth = require("./auth.json");
+var auth = require("./secret/discord.json");
 const cron = require("node-cron");
 
 const { botMsgActions } = require("./botMsgActions.js");
@@ -19,22 +17,21 @@ logger.add(new logger.transports.Console(), {
 logger.level = "debug";
 
 // Initialize Discord Bot
-var bot = new Discord.Client({
-  token: auth.token,
-  autorun: true
+var bot = new Discord.Client();
+
+bot.login(auth.token);
+
+bot.on("ready", () => {
+  logger.info("Logged in as: " + bot.user.tag);
 });
 
-bot.on("ready", function(evt) {
-  logger.info("Connected");
-  logger.info("Logged in as: ");
-  logger.info(bot.username + " - (" + bot.id + ")");
-});
-
-bot.on("message", function(user, userID, channelID, message, evt) {
+bot.on("message", (message) => {
+  // console.log(message)
   // Our bot needs to know if it will execute a command
   // It will listen for messages that will start with `!`
-  if (message.substring(0, 1) == "!") {
-    var args = message.substring(1).split(" ");
+  if (message.channel.id == channelID && message.content.substring(0, 1) == "!") {
+    console.log(message.content)
+    var args = message.content.substring(1).split(" ");
     var cmd = args[0];
 
     args = args.splice(1);
@@ -43,15 +40,13 @@ bot.on("message", function(user, userID, channelID, message, evt) {
       case "codinglab":
         const subCmd = args[0];
         const unresolvedData = googlesheetsapi.fetchGoogle();
-        const botMsgAct = botMsgActions(bot, channelID);
+        const botMsgAct = botMsgActions(message);
 
         switch (subCmd) {
           case "help":
-            bot.sendMessage({
-              to: channelID,
-              message:
+            message.channel.send(
                 "To find help a lab tech with a particular skill, use: `!codinglab skill <anyskill>` or you can list all lab techs with: `!codinglab`"
-            });
+            );
             break;
           case "skill":
             const skill = args[1];

@@ -15,7 +15,7 @@ function fetchGoogle() {
   // return a Promise function back to syncbot.js
   // and unpack the pulled data there
   return new Promise((resolve, reject) => {
-    fs.readFile("credentials.json", (err, content) => {
+    fs.readFile("./secret/google-credentials.json", (err, content) => {
       if (err) return console.log("Error loading client secret file:", err);
       // Authorize a client with credentials, then call the Google Sheets API.
 
@@ -29,18 +29,6 @@ function fetchGoogle() {
       });
     });
   });
-}
-
-function readCred() {
-  let prom = new Promise((resolve, reject) => {
-    fs.readFile("credentials.json", (err, content) => {
-      if (err) return console.log("Error loading client secret file:", err);
-      // Authorize a client with credentials, then call the Google Sheets API.
-      // authorize(JSON.parse(content), datapull);
-      resolve(content);
-    });
-  });
-  prom.then(credentials => authorize(JSON.parse(credentials), datapull));
 }
 
 /**
@@ -122,7 +110,7 @@ function datapull(auth) {
   // and unpack it in synbot.js (entry point of the bot)
   return sheets.spreadsheets.values.get({
     spreadsheetId: "1cg9E0APQNpHEHJ3nklFEv_RFF2-h51qdXEe-6h55FiQ",
-    range: "Sheet1!A2:F"
+    range: "bot"
   });
 }
 

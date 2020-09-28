@@ -1,5 +1,5 @@
 node_modules/
-credentials.json
-auth.json
+secret/
 token.json
 .env
+.DS_Store
