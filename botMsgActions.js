@@ -68,61 +68,37 @@ const setter = {
 /**
  * Function that includes message sending actions of the bot
  */
-function botMsgActions(incoming) {
+function botMsgActions(incoming, Discord) {
   const sendMsg = (msg) => {
     incoming.channel.send(msg)
   };
 
   return {
     sendAll(data) {
-      let counselorTable = "```*** Coding Lab Tech Info *** \n\n";
-      // console.log(data)
-      // 1. loop through fetched array of data
-      data.forEach((counselorInfo, counselorIndex) => {
-        // 2. Initiate start of the message sending to Discord
-        let zoomId = counselorInfo[3].slice(-10);
-        counselorTable += `${counselorInfo[0]} | ${counselorInfo[2]} | ZoomID: ${zoomId}\n${counselorInfo[1]}  \n\n`;
+      const embed = new Discord.MessageEmbed()
+        .setColor('#000000')
+        .setTitle(`Coding Lab Techs`);
 
-        // 3. Send the message at the end of the array
-        const midCounselor =  Math.floor((data.length / 2) - 1);
-        if (counselorIndex == midCounselor) {
-          counselorTable += "```";
-          sendMsg(`
-              ${counselorTable}
-              `);
-          counselorTable = "```"
-        }
-        const isLastCounselor = counselorIndex === data.length - 1;
-        if (isLastCounselor) {
-          counselorTable += "```";
-          sendMsg(`
-              ${counselorTable}
-              `);
-        }
+      data.forEach((counselor, counselorIndex) => {
+        let zoomTokens = counselor[3].split('/');
+        embed.addField(counselor[0], `*${counselor[2]}* | Zoom ID: ${zoomTokens[zoomTokens.length - 1]} | [Book Appointments Here](${counselor[5]})\n${counselor[1]}`);
       });
+      sendMsg(embed);
     },
     sendSkillMatched(data, inputSkill) {
       const matchedOnes = getter.skillMatchedCounselors(data, inputSkill);
 
       if (matchedOnes.length > 0) {
-        let msgTable = ` \`\`\`*** Following Techs Know <${inputSkill}>*** \n\n`;
+        const embed = new Discord.MessageEmbed()
+          .setColor('#000000')
+          .setTitle(`Following Lab Techs Know \`${inputSkill}\``);
 
         matchedOnes.forEach((counselor, counselorIndex) => {
-          let zoomId = counselor[3].slice(-10);
-          msgTable += `${counselor[0]} | ${counselor[2]} | ZoomID: ${zoomId} \n\n`;
-
-          // msgTable += `${counselor[0]} knows ${inputSkill}! Try ${counselor[2]}\n`;
-
-          const isLastCounselor = counselorIndex === matchedOnes.length - 1;
-          if (isLastCounselor) {
-            msgTable += "```";
-            msgTable +=
-              "Book hours here: https://calendar.google.com/calendar/selfsched?sstoken=UUQtTkNDbVFiUEhRfGRlZmF1bHR8NGNkOWNlZWVjOTZhYzI0MjAxNDYyMzFiMTJmNWZiZmE";
-            sendMsg(`
-              ${msgTable}
-              `);
-          }
+          let zoomTokens = counselor[3].split('/');
+          embed.addField(counselor[0], `*${counselor[2]}* | Zoom ID: ${zoomTokens[zoomTokens.length - 1]} | [Book Appointments Here](${counselor[5]})`);
         });
+  
+        sendMsg(embed);
       } else {
         sendMsg(
           `😅 Sorry! We have no ${inputSkill} experts at this time.  Try an ITP resident or faculty member here: https://itp.nyu.edu/help/in-person-help/office-hours/`
